@@ -1,0 +1,632 @@
+<!DOCTYPE html><html lang="en"><head>
+	<meta name="generator" content="Hugo 0.128.2">
+    <meta charset="utf-8">
+<title>On the external concurrency of current BDI frameworks for MAS</title>
+
+<meta name="author" content="Martina Baiardi">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="/emas-2024-bdi-concurrency-slides/reveal-js/dist/reset.css">
+<link rel="stylesheet" href="/emas-2024-bdi-concurrency-slides/reveal-js/dist/reveal.css">
+  <link rel="stylesheet" href="/emas-2024-bdi-concurrency-slides/css/custom-theme.min.145ea2240973ae8da3ef48094a37afba2a4e5be20efda6582e9047d1f78714bb.css" id="theme"><link rel="stylesheet" href="/emas-2024-bdi-concurrency-slides/highlight-js/solarized-dark.min.css">
+<link rel="stylesheet" href="https://gitcdn.link/repo/DanySK/css-blur-animation/master/blur.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Oxygen Mono" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu Mono" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://kit.fontawesome.com/81ac037be0.js" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    
+    <div class="reveal">
+      <div class="slides">
+  
+
+    <section><h1 id="on-the-external-concurrency">On the external concurrency</h1>
+<h1 id="of-current-bdi-frameworks-for-mas">of current BDI frameworks for MAS</h1>
+<br>
+<p>Martina Baiardi, Samuele Burattini, Giovanni Ciatto <br>
+Danilo Pianini, <strong>Alessandro Ricci</strong>, and Andrea Omicini</p>
+<p><small>Department of Computer Science and Engineering (DISI)<br>
+Alma Mater Studiorum — Università di Bologna <br>
+Via dell’Università 50, 47522 Cesena (FC), Italy </small></p>
+</section><section>
+<!-- ## BDI Agents
+
+Architettura BDI -> mettiamo il puntino su qual è l'architettura di riferimento
+
+Noi, a partire da questo, abbiamo fatto un nostro formalismo per descrivere la concorrenza, -->
+<h1 id="context">Context</h1>
+<h2 id="bdi-agents-programming">BDI Agents Programming</h2>
+
+<div class="multiCol "><div class="col col-50 "><div class="text-center">
+<ul>
+<li>
+<p>most famous semantics: <strong>AgentSpeak(L)</strong></p>
+</li>
+<li>
+<p>most famous architecture (see picture)</p>
+</li>
+<li>
+<p>several implementations</p>
+<ul>
+<li>focus on: Astra, GOAL, Jadex, JaKtA, <br>Jason, PHIDIAS, SPADE-BDI</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="col col-50 "><div class="text-center">
+<img src="images/architecture.png" width="80%">
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="motivation">Motivation</h2>
+<blockquote>
+<p>Insight: <em>the same architecture may be implemented in so many ways</em>
+<br> (e.g., w.r.t. <strong>concurrency</strong>)</p>
+</blockquote>
+<ul>
+<li>semantics <em>unaffected</em></li>
+<li>impact on practical properties such as <strong>efficiency</strong> &amp; <strong>reproducibility</strong></li>
+</ul>
+<h3 id="goals">Goals</h3>
+<ol>
+<li>Devise concurrency patterns from the state-of-the-practice</li>
+<li>Classify BDI technologies accordingly</li>
+</ol>
+</section><section>
+<!-- ## Computational Autonomy
+<br>
+
+- **Computational autonomy** is a pre-requisite for **autonomy** in software agents
+- Agent's control-flow &rarr; mainstream programming languages concurrency abstractions <br> (e.g., thread, process, ...)  -->
+<h2 id="background">Background</h2>
+<ul>
+<li>
+<p>Agents lifecycle, in general, is a control-loop</p>
+<ul>
+<li><strong>sense</strong>, <em>then</em> <strong>deliberate</strong>, <em>then</em> <strong>act</strong>, repeat</li>
+</ul>
+</li>
+<li>
+<p>BDI agents are more <em>complex</em></p>
+<ul>
+<li>e.g. sense implies collecting percepts, revising beliefs, etc.</li>
+<li>e.g. deliberate implies selecting plans, updating intentions, etc.</li>
+</ul>
+</li>
+</ul>
+<p><img src="./bdi.svg" alt=""></p>
+</section><section>
+<h2 id="which-concurrency">Which concurrency?</h2>
+<p>We distinguish between <strong>internal</strong> and <strong>external</strong> concurrency</p>
+<!-- 
+<div class='multiCol '><div class='col col-50 '><div class="text-center">
+<h3 id="internal-concurrency">Internal Concurrency</h3>
+<p>\begin{aligned}
+Agent ::== Perceive \parallel Deliberate \parallel Act
+\end{aligned}</p>
+<p>\begin{aligned}
+Perceive ::== (\verb|perceive|_1 \parallel \ldots \parallel \verb|perceive|_M) \cdot Sense
+\end{aligned}</p>
+<p>\begin{aligned}
+Deliberate ::== (Deliberate_1 \parallel \ldots \parallel Deliberate_L) \cdot Deliberate
+\end{aligned}</p>
+<p>\begin{aligned}
+Act ::== (Act_1 \parallel \ldots \parallel Act_K) \cdot Act
+\end{aligned}</p>
+</div>
+</div>
+<div class='col col-50 '><div class="text-center">
+<h3 id="external-concurrency">External Concurrency</h3>
+<p>\begin{aligned}
+Mas ::== Agent_1 \parallel \ldots \parallel Agent_N
+\end{aligned}</p>
+<p>\begin{aligned}
+Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
+\end{aligned}</p>
+</div>
+</div>
+</div> -->
+<blockquote>
+<p><strong>Internal</strong> concurrency $\approx$ how agents schedule intentions internally</p>
+</blockquote>
+<blockquote>
+<p><strong>External</strong> concurrency  $\approx$ how agents’ control-loops are scheduled by the underlying platform</p>
+</blockquote>
+</section><section>
+<h2 id="which-concurrency-abstractions">Which concurrency abstractions?</h2>
+<h4 id="in-practice-technological-platforms-support">In practice, technological platforms support:</h4>
+
+<div class="multiCol "><div class="col col-50 "><div class="text-center">
+<ul>
+<li><strong>Processes</strong></li>
+<li><strong>Threads</strong></li>
+<li><strong>Event Loops</strong></li>
+<li><strong>Executors</strong></li>
+</ul>
+</div>
+</div>
+<div class="col col-50 "><p><img src="./concurrency-abstractions.svg" alt=""></p>
+</div>
+</div>
+</section><section>
+<h2 id="common-concurrency-patterns-for-mas">Common concurrency patterns for MAS</h2>
+<ul>
+<li><strong>One-Agent-One-Thread</strong> ( <strong>1A1T</strong> )</li>
+<li><strong>All-Agents-One-Thread</strong> ( <strong>AA1T</strong> )</li>
+<li><strong>All-Agents-One-Event-Loop</strong> ( <strong>AA1EL</strong> )</li>
+<li><strong>All-Agents-One-Executor</strong> ( <strong>AA1E</strong> )
+<ul>
+<li>With a <strong>fixed</strong>-size thread pool</li>
+<li>With a <strong>variable</strong>-size thread pool</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="one-agent-one-thread--1a1t-">One-Agent-One-Thread ( <strong>1A1T</strong> )</h2>
+<p><img src="./1a1t.svg" alt=""></p>
+</section><section>
+<h2 id="all-agents-one-thread--aa1t-">All-Agents-One-Thread ( <strong>AA1T</strong> )</h2>
+<p><img src="./aa1t.svg" alt=""></p>
+</section><section>
+<h2 id="all-agents-one-executor--aa1e-">All-Agents-One-Executor ( <strong>AA1E</strong> )</h2>
+<p>Allows for various level of <strong>granularity</strong>:</p>
+
+<div class="multiCol "><div class="col col-50 "><p><img src="./aa1e.svg" alt=""></p>
+</div>
+<div class="col col-50 "><p><img src="./aa1e-bis.svg" alt=""></p>
+</div>
+</div>
+<blockquote>
+<p>Different properties w.r.t. <strong>fixed</strong> or <strong>variable</strong> amount of worker threads ($N$)</p>
+</blockquote>
+<blockquote>
+<p>All-Agents-One-Event-Loop (<strong>AA1EL</strong>) $\equiv$ AA1E with <em>just one thread</em></p>
+</blockquote>
+</section><section>
+<h2 id="one-agent-one-process-1a1p-">One-Agent-One-Process( <strong>1A1P</strong> )</h2>
+<p><img src="./1a1p.svg" alt=""></p>
+</section><section>
+<h2 id="which-concurrency-abstraction-is-the-most-appropriate">Which concurrency abstraction is the most appropriate?</h2>
+<ul>
+<li>The selection of an appropriate concurrency model deeply impacts several aspects of the agent programming framework
+<ul>
+<li>The <strong>efficiency</strong> of the MAS may improve, but</li>
+</ul>
+<!-- TODO add example -->
+<ul>
+<li><strong>predictability</strong> and <strong>reproducibility</strong> may be affected.
+<!-- TODO add example -->
+</li>
+</ul>
+</li>
+<li><strong>Capturing and controlling concurrency is crucial, <br>and they often are hidden under the framework abstractions</strong></li>
+</ul>
+</section><section>
+<h2 id="analysis-on-bdi-frameworks">Analysis on BDI frameworks:</h2>
+
+<div class="multiCol "><div class="col col-50 "><div class="text-center">
+<h3 id="methodology">Methodology</h3>
+<p>We inspected external concurrency in three steps:</p>
+<ol>
+<li><strong>Empirical Evaluation</strong> through a synthetic benchmark</li>
+<li><strong>Documentation</strong> and <strong>source code inspection</strong> of the selected BDI frameworks</li>
+<li><strong>Direct contact</strong> with maintainers</li>
+</ol>
+</div>
+</div>
+<div class="col col-50 "><div class="text-center">
+<h3 id="framework-selection">Framework selection</h3>
+<p>We selected actively-maintained and open source BDI programming frameworks:</p>
+<ul>
+<li><strong>Astra</strong></li>
+<li><strong>GOAL</strong></li>
+<li><strong>Jadex</strong></li>
+<li><strong>JaKtA</strong></li>
+<li><strong>Jason</strong></li>
+<li><strong>PHIDIAS</strong></li>
+<li><strong>SPADE-BDI</strong></li>
+</ul>
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="benchmark">Benchmark</h2>
+
+<div class="multiCol "><div class="col col-50 "><div class="text-center">
+<h3 id="agent-pinger">Agent: PINGER</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000;font-weight:bold">!</span><span style="color:#4e9a06">ping</span><span style="color:#000;font-weight:bold">.</span>
+</span></span><span style="display:flex;"><span><span style="color:#4e9a06">+</span><span style="color:#000;font-weight:bold">!</span><span style="color:#4e9a06">ping</span> <span style="color:#4e9a06">&lt;-</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention 1"</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">send</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">pong</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">tell</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">ball</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">!!</span><span style="color:#000">showThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#8f5902;font-style:italic">/* Generates intention 2 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention 1"</span><span style="color:#000;font-weight:bold">).</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">+</span><span style="color:#4e9a06">ball</span> <span style="color:#4e9a06">&lt;-</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">!!</span><span style="color:#000">showThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">4</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#8f5902;font-style:italic">/* Generates intention 4 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention 3"</span><span style="color:#000;font-weight:bold">).</span>
+</span></span><span style="display:flex;"><span><span style="color:#4e9a06">+</span><span style="color:#000;font-weight:bold">!</span><span style="color:#000">showThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">X</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#4e9a06">&lt;-</span> <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention "</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">X</span><span style="color:#000;font-weight:bold">).</span>
+</span></span></code></pre></div></div>
+</div>
+<div class="col col-50 "><div class="text-center">
+<h3 id="agent-ponger">Agent: PONGER</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">+</span><span style="color:#4e9a06">ball</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">source</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">X</span><span style="color:#000;font-weight:bold">)]</span> <span style="color:#4e9a06">&lt;-</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention 5"</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">send</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">X</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">tell</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">ball</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">!!</span><span style="color:#000">showThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">6</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#8f5902;font-style:italic">/* Generates intention 6 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention 5"</span><span style="color:#000;font-weight:bold">).</span>
+</span></span><span style="display:flex;"><span><span style="color:#4e9a06">+</span><span style="color:#000;font-weight:bold">!</span><span style="color:#000">showThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">X</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#4e9a06">&lt;-</span> <span style="color:#000;font-weight:bold">.</span><span style="color:#000">revealCurrentThread</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"intention "</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">X</span><span style="color:#000;font-weight:bold">).</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="results">Results</h2>
+<table>
+<thead>
+<tr>
+<th>Model ⇒ <br> Tech. ⇓</th>
+<th><strong>1A1T</strong></th>
+<th><strong>AA1T</strong></th>
+<th><strong>AA1EL</strong></th>
+<th><strong>AA1E</strong> <br> <strong>fixed</strong></th>
+<th><strong>AA1E</strong> <br> <strong>variable</strong></th>
+<th><strong>1A1P</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Astra</strong></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+</tr>
+<tr>
+<td><strong>Goal</strong></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+</tr>
+<tr>
+<td><strong>Jadex</strong></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+</tr>
+<tr>
+<td><strong>JaKtA</strong></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+</tr>
+<tr>
+<td><strong>Jason</strong></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+</td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+</tr>
+<tr>
+<td><strong>Phidias</strong></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+</tr>
+<tr>
+<td><strong>Spade-BDI</strong></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span></td>
+<td><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span></td>
+</tr>
+</tbody>
+</table>
+<br>
+<h4 id="legend">Legend</h4>
+<ul>
+<li><span>
+    <i class="fa fa-check" style="color: green;"></i>
+     
+</span> $\equiv$ supported</li>
+<li><span>
+    <i class="fa-solid fa-xmark" style="color: red;"></i>
+     
+</span> $\equiv$ <strong>not</strong> supported</li>
+<li><span>
+    <i class="fa-solid fa-check" style="color: orange"></i> </span>
+ $\equiv$ supported in principle, <br>but requires the user to implement it</li>
+</ul>
+</section><section>
+<h2 id="discussion">Discussion</h2>
+<blockquote>
+<p><strong>Takeaway 1</strong>: better for a BDI framework to support <em>multiple</em> concurrency patterns</p>
+</blockquote>
+<blockquote>
+<p><strong>Takeaway 2</strong>: even better for a BDI framework to support concurrency patterns <em>customisability</em> on the <strong>user-side</strong></p>
+</blockquote>
+<ul>
+<li>supporting e.g. <strong>comparing</strong> perfomance among different concurrency patterns, for the same MAS</li>
+<li>supporting e.g. <em>prioritising</em> <strong>determinism</strong> over <strong>efficiency</strong> (AA1T) for <strong>testing</strong></li>
+<li>supporting e.g. <em>prioritising</em> <strong>indipendence</strong> of control flows (1A1T) for <strong>I/O-bound</strong> tasks</li>
+</ul>
+</section><section>
+<h2 id="conclusions">Conclusions</h2>
+<p>It is necessary to separate BDI architecture from its actual execution</p>
+<ul>
+<li><strong>without impacting the architecture definition</strong></li>
+<li><strong>without necessarily knowing how to program concurrency abstractions</strong></li>
+<li><strong>choosing dynamically which concurrent execution suits the scenario</strong></li>
+</ul>
+</section>
+
+  
+
+
+</div>
+      
+
+    </div>
+<script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-hugo/object-assign.js"></script>
+
+<a href="/emas-2024-bdi-concurrency-slides/reveal-js/dist/print/" id="print-location" style="display: none;"></a>
+
+<script type="application/json" id="reveal-hugo-site-params">{"custom_theme":"custom-theme.scss","custom_theme_compile":true,"custom_theme_options":{"enablesourcemap":true,"targetpath":"css/custom-theme.css"},"height":"1080","highlight_theme":"solarized-dark","history":true,"mermaid":[{}],"slide_number":true,"theme":"league","transition":"slide","transition_speed":"fast","width":"1920"}</script>
+<script type="application/json" id="reveal-hugo-page-params">null</script>
+
+<script src="/emas-2024-bdi-concurrency-slides/reveal-js/dist/reveal.js"></script>
+
+
+  
+  
+  <script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-js/plugin/markdown/markdown.js"></script>
+  
+  <script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-js/plugin/highlight/highlight.js"></script>
+  
+  <script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-js/plugin/zoom/zoom.js"></script>
+  
+  <script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-js/plugin/notes/notes.js"></script>
+  
+  
+  <script type="text/javascript" src="/emas-2024-bdi-concurrency-slides/reveal-js/plugin/notes/notes.js"></script>
+
+
+
+
+<script type="text/javascript">
+  
+  
+  function camelize(map) {
+    if (map) {
+      Object.keys(map).forEach(function(k) {
+        newK = k.replace(/(\_\w)/g, function(m) { return m[1].toUpperCase() });
+        if (newK != k) {
+          map[newK] = map[k];
+          delete map[k];
+        }
+      });
+    }
+    return map;
+  }
+
+  var revealHugoDefaults = { center: true, controls: true, history: true, progress: true, transition: "slide" };
+
+  var revealHugoPlugins = { 
+    plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom ]
+   };
+  var revealHugoSiteParams = JSON.parse(document.getElementById('reveal-hugo-site-params').innerHTML);
+  var revealHugoPageParams = JSON.parse(document.getElementById('reveal-hugo-page-params').innerHTML);
+  
+  var options = Object.assign({},
+    camelize(revealHugoDefaults),
+    camelize(revealHugoSiteParams),
+    camelize(revealHugoPageParams),
+    camelize(revealHugoPlugins));
+  Reveal.initialize(options);
+</script>
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+</script>
+
+<script type="text/javascript" id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+<script>
+  if (/.*?(\?|&)print-pdf/.test(window.location.toString())) {
+      var ytVideos = document.getElementsByTagName("iframe")
+      for (let i = 0; i < ytVideos.length; i++) {
+          var videoFrame = ytVideos[i]
+          var isYouTube = /^https?:\/\/(www.)youtube\.com\/.*/.test(videoFrame.src)
+          if (isYouTube) {
+              console.log(`Removing ${videoFrame.src}`)
+              var parent = videoFrame.parentElement
+              videoFrame.remove()
+              var p = document.createElement('p')
+              p.append(
+                  document.createTextNode(
+                      "There was an embedded video here, but it is disabled in the printed version of the slides."
+                  )
+              )
+              p.append(document.createElement('br'))
+              p.append(
+                  document.createTextNode(
+                      `Visit instead ${
+                          videoFrame.src
+                      } or ${
+                          videoFrame.src.replace(
+                              /(^https?:\/\/(www.)youtube\.com)\/(embed\/)(\w+).*/,
+                              "https://www.youtube.com/watch?v=$4"
+                          )
+                      }`
+                  )
+              )
+              parent.appendChild(p)
+          }
+      }
+  }
+</script>
+
+
+    
+  
+
+</body></html>
