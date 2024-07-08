@@ -1,6 +1,6 @@
-baseURL = "https://anitvam.github.io/emas-2024-bdi-concurrency-slides"
+baseURL = "https://anitvam.github.io/woa-2024-bdi-concurrency-slides"
 languageCode = "en-us"
-title = "A Hugo theme for creating Reveal.js presentations"
+title = "On the external concurrency of current BDI frameworks for MAS"
 disableKinds = ["sitemap", "RSS"]
 theme = "reveal-hugo"
 publishDir = "build"

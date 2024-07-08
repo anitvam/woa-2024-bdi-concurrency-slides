@@ -8,8 +8,8 @@ outputs = ["Reveal"]
 
 <br>
 
-Martina Baiardi, Samuele Burattini, Giovanni Ciatto <br />
-Danilo Pianini, **Alessandro Ricci**, and Andrea Omicini
+**Martina Baiardi**, Samuele Burattini, Giovanni Ciatto <br />
+Danilo Pianini, Alessandro Ricci, and Andrea Omicini
 
 <small>Department of Computer Science and Engineering (DISI)<br>
 Alma Mater Studiorum — Università di Bologna <br>
