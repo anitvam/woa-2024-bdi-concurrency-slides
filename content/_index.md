@@ -147,7 +147,7 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \\
 #### In practice, technological platforms support:
 
 {{% multicol %}}
-{{% col %}}
+{{% col class="col-md-4" %}}
 
 <div class="text-center">
 
@@ -161,7 +161,7 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \\
 {{% /col %}}
 {{% col %}}
 
-![](./concurrency-abstractions.svg)
+<img width=80% src="./concurrency-abstractions.svg" />
 
 {{% /col %}}
 {{% /multicol %}}
@@ -183,13 +183,13 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \\
 
 ## One-Agent-One-Thread ( **1A1T** )
 
-![](./1a1t.svg)
+<img width=70% src="./1a1t.svg" />
 
 ---
 
 ## All-Agents-One-Thread ( **AA1T** )
 
-![](./aa1t.svg)
+<img width=70% src="./aa1t.svg" />
 
 ---
 
@@ -218,18 +218,18 @@ Allows for various level of __granularity__:
 
 ## One-Agent-One-Process( **1A1P** )
 
-![](./1a1p.svg)
+<img width=70% src="./1a1p.svg" />
 
 ---
 
 ## Which concurrency abstraction is the most appropriate?
 
-- The selection of an appropriate concurrency model deeply impacts several aspects of the agent programming framework 
+- The selection of an appropriate concurrency model _deeply_ impacts several aspects of the agent programming framework 
   - The **efficiency** of the MAS may improve, but
   <!-- TODO add example -->
-  - **predictability** and **reproducibility** may be affected.
+  - **Predictability** and **reproducibility** may be affected.
     <!-- TODO add example -->
-- **Capturing and controlling concurrency is crucial, <br />and they often are hidden under the framework abstractions** 
+- **Capturing and controlling concurrency is crucial, and they often are hidden under the framework abstractions** 
 
 
 ---
@@ -340,7 +340,7 @@ We selected actively-maintained and open source BDI programming frameworks:
 #### Legend
 - {{< tick >}} {{< /tick >}} $\equiv$ supported
 - {{< cross >}} {{< /cross >}} $\equiv$ __not__ supported
-- {{< maybe >}} {{< /maybe >}} $\equiv$ supported in principle, <br />but requires the user to implement it
+- {{< maybe >}} {{< /maybe >}} $\equiv$ supported in principle, but requires the user to implement it
 
 ---
 
