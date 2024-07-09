@@ -141,7 +141,7 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
 <h2 id="which-concurrency-abstractions">Which concurrency abstractions?</h2>
 <h4 id="in-practice-technological-platforms-support">In practice, technological platforms support:</h4>
 
-<div class="multiCol "><div class="col col-50 "><div class="text-center">
+<div class="multiCol "><div class="col col-50 col-md-4"><div class="text-center">
 <ul>
 <li><strong>Processes</strong></li>
 <li><strong>Threads</strong></li>
@@ -150,7 +150,7 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
 </ul>
 </div>
 </div>
-<div class="col col-50 "><p><img src="./concurrency-abstractions.svg" alt=""></p>
+<div class="col col-50 "><img width="80%" src="./concurrency-abstractions.svg">
 </div>
 </div>
 </section><section>
@@ -168,10 +168,10 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
 </ul>
 </section><section>
 <h2 id="one-agent-one-thread--1a1t-">One-Agent-One-Thread ( <strong>1A1T</strong> )</h2>
-<p><img src="./1a1t.svg" alt=""></p>
+<img width="70%" src="./1a1t.svg">
 </section><section>
 <h2 id="all-agents-one-thread--aa1t-">All-Agents-One-Thread ( <strong>AA1T</strong> )</h2>
-<p><img src="./aa1t.svg" alt=""></p>
+<img width="70%" src="./aa1t.svg">
 </section><section>
 <h2 id="all-agents-one-executor--aa1e-">All-Agents-One-Executor ( <strong>AA1E</strong> )</h2>
 <p>Allows for various level of <strong>granularity</strong>:</p>
@@ -189,22 +189,22 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
 </blockquote>
 </section><section>
 <h2 id="one-agent-one-process-1a1p-">One-Agent-One-Process( <strong>1A1P</strong> )</h2>
-<p><img src="./1a1p.svg" alt=""></p>
+<img width="70%" src="./1a1p.svg">
 </section><section>
 <h2 id="which-concurrency-abstraction-is-the-most-appropriate">Which concurrency abstraction is the most appropriate?</h2>
 <ul>
-<li>The selection of an appropriate concurrency model deeply impacts several aspects of the agent programming framework
+<li>The selection of an appropriate concurrency model <em>deeply</em> impacts several aspects of the agent programming framework
 <ul>
 <li>The <strong>efficiency</strong> of the MAS may improve, but</li>
 </ul>
 <!-- TODO add example -->
 <ul>
-<li><strong>predictability</strong> and <strong>reproducibility</strong> may be affected.
+<li><strong>Predictability</strong> and <strong>reproducibility</strong> may be affected.
 <!-- TODO add example -->
 </li>
 </ul>
 </li>
-<li><strong>Capturing and controlling concurrency is crucial, <br>and they often are hidden under the framework abstractions</strong></li>
+<li><strong>Capturing and controlling concurrency is crucial, and they often are hidden under the framework abstractions</strong></li>
 </ul>
 </section><section>
 <h2 id="analysis-on-bdi-frameworks">Analysis on BDI frameworks:</h2>
@@ -472,7 +472,7 @@ Agent ::== \verb|sense| \cdot \verb|deliberate| \cdot \verb|act| \cdot Agent \
 </span> $\equiv$ <strong>not</strong> supported</li>
 <li><span>
     <i class="fa-solid fa-check" style="color: orange"></i> </span>
- $\equiv$ supported in principle, <br>but requires the user to implement it</li>
+ $\equiv$ supported in principle, but requires the user to implement it</li>
 </ul>
 </section><section>
 <h2 id="discussion">Discussion</h2>
