@@ -351,7 +351,7 @@ We selected actively-maintained and open source BDI programming frameworks:
 > __Takeaway 2__: even better for a BDI framework to support concurrency patterns _customisability_ on the __user-side__ 
 + supporting e.g. __comparing__ perfomance among different concurrency patterns, for the same MAS
 + supporting e.g. _prioritising_ __determinism__ over __efficiency__ (AA1T) for __testing__ 
-+ supporting e.g. _prioritising_ __indipendence__ of control flows (1A1T) for __I/O-bound__ tasks 
++ supporting e.g. _prioritising_ __independence__ of control flows (1A1T) for __I/O-bound__ tasks 
  
 ---
 
